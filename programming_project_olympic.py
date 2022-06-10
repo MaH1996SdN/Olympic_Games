@@ -263,4 +263,58 @@ with st.expander('Top 5 medalists'):
     plt.legend(loc="upper left")
     st.write(ax)
 
+# top 10 countries with medals
+with st.expander('Top 10 countries with medals'):
+   total = Medals.Country.value_counts().reset_index(name='Medal').head(10)
+   sns.catplot(x="index", y="Medal", data=total, height=6, kind="bar")
+   plt.xlabel('Countries', fontsize=12 )
+   plt.ylabel('Number of Medals', fontsize=12)
+   plt.title('Top 10 countries with medals', fontweight='bold', fontsize=14)
+   plt.xticks(rotation = 45)
+   st.pyplot(plt.gcf())
 
+
+
+# top 10 countries with female medalists
+with st.expander('Top 10 countries with female medalists'):
+    femaleMedalistByCountry = femaleMedalists.Country.value_counts().reset_index(name='Medal').head(10)
+    sns.catplot(x='index', y='Medal', data=femaleMedalistByCountry, height=6, kind='bar')
+    plt.xlabel('Countries' , fontsize=12 )
+    plt.ylabel('Number of Medals', fontsize=12)
+    plt.title('Top 10 countries with female medalists', fontweight='bold', fontsize=14)
+    plt.xticks(rotation = 45)
+    st.pyplot(plt.gcf())
+
+
+# Age of medalists
+with st.expander('Age of medalists'):
+    ax = plt.figure(figsize=(10,6))
+    plt.plot(Medals['Age'].value_counts().sort_index())
+    plt.xticks(np.arange(5, 80, step=5))
+    plt.title('Age of medalists', fontweight='bold', fontsize=14)
+    plt.xlabel('Age', fontsize=12)
+    st.write(ax)
+
+# Height of medalists
+with st.expander('Height of medalists'):
+    ax = plt.figure(figsize=(10,6))
+    plt.plot(Medals['Height'].value_counts().sort_index())
+    plt.xticks(np.arange(130, 230, step=5))
+    plt.title('Height of medalists', fontweight='bold', fontsize=14)
+    plt.xlabel('Height', fontsize=12)
+    st.write(ax)
+
+# Number of Female and Male Athletes over time
+with st.expander('Number of Female and Male Athletes over time'):
+    maleParticipants = olympic_df.loc[(olympic_df['Sex'] == 'M')]
+    f = femaleParticipants.groupby('Year')['Sex'].value_counts()
+    m = maleParticipants.groupby('Year')['Sex'].value_counts()
+    ax = plt.figure(figsize=(16, 14))
+    plt.plot(f.loc[:,'F'], label = 'Female', color = 'red')
+    plt.plot(m.loc[:,'M'], label = 'Male', color = 'blue')
+    plt.title('Number of Female and Male Athletes over time', fontweight='bold', fontsize=14)
+    plt.xlabel('Years', fontsize=12)
+    plt.xticks(np.arange(1890, 2030, step=4))
+    plt.xticks(rotation = 45)
+    plt.legend()
+    st.write(ax)
