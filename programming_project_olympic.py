@@ -1,3 +1,4 @@
+# importing libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,6 +19,7 @@ regions_df = pd.read_csv('https://raw.githubusercontent.com/MaH1996SdN/programmi
 
 
 #******************************INTRODUCTION*************************************************************************************************************************
+
 # adding some explanation about the data
 st.header('120 years of Olympic history')
 st.write('basic bio data on athletes and medal results from Athens 1896 to Rio 2016')
@@ -34,10 +36,10 @@ if show_raw_data:
     st.write(olympic_df)
 
 
-#********************************ORGANAZING CLEANING DATA************************************************************************************************************
+#********************************ORGANAZING AND CLEANING DATA************************************************************************************************************
 
 # droping extra columns: id, games, event in olympic dataframe
-olympic_df.drop(['ID', 'Games','Event'], axis=1, inplace=True)
+olympic_df.drop(['ID', 'Games', 'City'], axis=1, inplace=True)
 
 # dropping extra column: note in regions dataframe
 regions_df.drop('notes', axis=1, inplace=True)
@@ -49,7 +51,7 @@ olympic_df = pd.merge(olympic_df, regions_df, on='NOC', how='left')
 olympic_df.rename(columns = {'region':'Country'}, inplace = True)
 
 # dropping extra column in olympic dataframe: Team/ includes unrelated data
-olympic_df.drop('Team', axis=1, inplace=True)
+olympic_df.drop(['Team', 'NOC'], axis=1, inplace=True)
 
 # removing rows containing null values of Age column 
 olympic_df.dropna(subset=['Age'], inplace=True)
@@ -72,11 +74,19 @@ olympic_df = olympic_df[olympic_df['Country'].notna()]
 # removing the rows containing "Art Competitions in the "Sport" column
 olympic_df.drop(olympic_df.loc[olympic_df['Sport']=='Art Competitions'].index, inplace=True)
 
+# creating medals dataframe
 Medals = olympic_df.loc[olympic_df['Medal'] != 0 ]
+
+# creating gold medals dataframe
 goldMedals = olympic_df.loc[olympic_df['Medal'] == 1]
 
+# creating female participants dataframe
 femaleParticipants = olympic_df.loc[(olympic_df['Sex'] == 'F')]
+
+# creating female medalists dataframe
 femaleMedalists = femaleParticipants.loc[femaleParticipants['Medal'] != 0]
+
+# creating female gold medalists dataframe
 femaleGoldMedalists = femaleParticipants.loc[femaleParticipants['Medal'] == 1]
 
 
@@ -100,6 +110,7 @@ st.text("")
 #**************************EXPLORATION********************************************************************************************************************
 st.subheader('Exploration')
 st.text("")
+
 #medals
 with st.expander('Medals'):
    
