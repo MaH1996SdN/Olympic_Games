@@ -1,4 +1,5 @@
 # importing libraries
+from ctypes.wintypes import SIZE
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,6 +12,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import KFold
+from PIL import Image
 
 
 # creating the olympics dataframe 
@@ -29,6 +32,11 @@ st.write('This is a historical dataset on the modern Olympic Games, including al
 st.text("")
 st.text("")
 
+image = Image.open('./2.jpg')
+st.image(image)
+
+st.text("")
+st.text("")
 
 # adding a checkbox for displayin raw data
 show_raw_data = st.checkbox('Show raw data')
@@ -103,128 +111,125 @@ st.text("")
 st.text("")
 
 
-# #adding sidebar
-# with st.sidebar:
-#     st.write("check out Github [link](https://github.com/MaH1996SdN/Programming_Project)")
-
 
 #**************************EXPLORATION********************************************************************************************************************
 st.subheader('Exploration')
 st.text("")
 
-#medals
+# medals
 with st.expander('Medals'):
    
+   # creating 3 columns with srtreamlit to show data
     col_21, col_22, col_23 = st.columns(3)
     with col_21:
-        st.metric('number of Gold medals:', olympic_df['Medal'].value_counts()[1])
+        st.metric('Number of Gold medals:', olympic_df['Medal'].value_counts()[1])
     with col_22:
-        st.metric('number of Silver medals:', olympic_df['Medal'].value_counts()[2])
+        st.metric('Number of Silver medals:', olympic_df['Medal'].value_counts()[2])
     with col_23:
-        st.metric('number of Bronze medals:', olympic_df['Medal'].value_counts()[3])
+        st.metric('Number of Bronze medals:', olympic_df['Medal'].value_counts()[3])
     st.metric('Total number of medals:', Medals.shape[0])
 
 
-#Countries
+# Countries
 with st.expander('Exploration on countries'):
     col_1, col_2 = st.columns(2)
     with col_1:
-        st.write('Participants by country/ Top 5')
+        st.write('Number of participants by country/ Top 5')
         # top 5 countries by number of participants
-        st.dataframe(olympic_df.Country.value_counts().head(5))
+        st.dataframe(olympic_df.Country.value_counts().rename(index='').head(5))
         st.text("")
     with col_2:
-        st.write('Participants by country/ Last 5')
+        st.write('Number of participants by country/ Last 5')
         # last 5 countries by number of participants
-        st.dataframe(olympic_df.Country.value_counts().tail(5))
+        st.dataframe(olympic_df.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
     col_3, col_4 = st.columns(2)
     with col_3:
         st.write('Number of medals by country/ Top 5')
         # top 5 countries by number of medals
-        st.dataframe(Medals.Country.value_counts().head(5))
+        st.dataframe(Medals.Country.value_counts().rename(index='').head(5))
         st.text("")
     with col_4:
         st.write('Number of medals by country/ Last 5')
         # last 5 countries by number of medals
-        st.dataframe(Medals.Country.value_counts().tail(5))
+        st.dataframe(Medals.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
     col_5, col_6 = st.columns(2)
     with col_5:
-        st.write('Number of Gold medals by country/ Top 5')
+        st.write('Number of gold medals by country/ Top 5')
         # top 5 countries by number of gold medals
-        st.dataframe(goldMedals.Country.value_counts().head(5))
+        st.dataframe(goldMedals.Country.value_counts().rename(index='').head(5))
         st.text("")
     with col_6:
-        st.write('Number of Gold medals by country/ Last 5')
+        st.write('Number of gold medals by country/ Last 5')
         # last 5 countries by number of gold medals
-        st.dataframe(goldMedals.Country.value_counts().tail(5))
+        st.dataframe(goldMedals.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
 
 
-#Sports
+# Sports
 with st.expander('Exploration on sports'):
     col_9, col_10 = st.columns(2)
     with col_9:
         st.write('Top 5 sports by number of medals')
         # top 5 sports by number of medals
-        st.dataframe(Medals.Sport.value_counts().head(5))
+        st.dataframe(Medals.Sport.value_counts().rename(index='').head(5))
         st.text("")
     with col_10:
         st.write('Last 5 sports by number of medals')
         # last 5 sports by number of medals
-        st.dataframe(Medals.Sport.value_counts().tail(5))
+        st.dataframe(Medals.Sport.value_counts().rename(index='').tail(5))
         st.text("")
 
 
 
 
-#women in olympics
+# women in olympics
 with st.expander('Exploration on women in Olympics'):
     col_13, col_14 = st.columns(2)
     with col_13:
-        st.write('Female participants by country/ Top 5')
+        st.write('Number of female participants by country/ Top 5')
         # top 5 countries by number of female participants
-        st.dataframe(femaleParticipants.Country.value_counts().head(5))
+        st.dataframe(femaleParticipants.Country.value_counts().rename(index='').head(5))
         st.text("")
     with col_14:
-        st.write('Female participants by country/ Last 5')
+        st.write('Number of female participants by country/ Last 5')
         # last 5 countries by number of female participants
-        st.dataframe(femaleParticipants.Country.value_counts().tail(5))
+        st.dataframe(femaleParticipants.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
     col_15, col_16 = st.columns(2)
     with col_15:
-        st.write('Number of medals by women in countries/ Top 5')
+        st.write('Number of female medalists by country/ Top 5')
         # top 5 countries by number of medals by women
-        st.dataframe(femaleMedalists.Country.value_counts().head(5))
+        st.dataframe(femaleMedalists.Country.value_counts().rename(index='').head(5))
         st.text("")
     with col_16:
-        st.write('Number of medals by women in countries/ Last 5')
+        st.write('Number of female medalists by country/ Last 5')
         # last 5 countries by number of medals by women
-        st.dataframe(femaleMedalists.Country.value_counts().tail(5))
+        st.dataframe(femaleMedalists.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
     col_17, col_18 = st.columns(2)
     with col_17:
-        st.write('Number of Gold medals by women in countries/ Top 5')
+        st.write('Number of female gold medalists by country/ Top 5')
         # top 5 countries by number of gold medals by women
-        st.dataframe(femaleGoldMedalists.Country.value_counts().head(5))
+        st.dataframe(femaleGoldMedalists.Country.value_counts().rename(index='').head(5))
         st.text("")
     with col_18:
-        st.write('Number of Gold medals by women in countries/ Last 5')
+        st.write('Number of female gold medalists by country/ Last 5')
         # last 5 countries by number of gold medals by women
-        st.dataframe(femaleGoldMedalists.Country.value_counts().tail(5))
+        st.dataframe(femaleGoldMedalists.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
-#Correlation
+# Correlation
 with st.expander('Correlation between features'):
     st.dataframe(olympic_df.corr())
 
-#distrubution
+# distrubution
 with st.expander('Distrubutions'):
     col_19, col_20 = st.columns(2)
     with col_19:
@@ -240,6 +245,8 @@ with st.expander('Distrubutions'):
         st.write(ax)
         st.caption('Distrubution of Participant\'s Height')
 
+st.text("")
+st.text("")
 
 #**************************Charts********************************************************************************************************************
 
@@ -260,7 +267,7 @@ with st.expander('Percentage of participants'):
     ax = plt.figure(figsize=(10,6))
     labels = ['Male', 'Female']
     plt.pie(olympic_df['Sex'].value_counts(), labels=labels, autopct='%.2f%%', startangle=90, shadow=True)
-    plt.title('participants by sex', fontweight='bold', fontsize=14)
+    plt.title('Percentage of participants by sex', fontweight='bold', fontsize=14)
     plt.legend()
     st.write(ax)
 
@@ -269,10 +276,10 @@ with st.expander('Top 5 medalists'):
     ax = plt.figure(figsize=(10,6))
     lb = Medals['Name'].value_counts().head(5)
     labels = lb.index
-    plt.pie(Medals['Name'].value_counts().head(5),labels= labels, autopct='%.2f%%', startangle=90, shadow=True)
+    plt.pie(Medals['Name'].value_counts().head(5),labels= labels, autopct='%.2f%%', startangle=90)
     plt.title('Top 5 medalists', fontweight='bold', fontsize=14)
     plt.legend()
-    plt.legend(loc="upper left")
+    plt.legend(loc="upper left", prop={'size': 6})
     st.write(ax)
 
 # top 10 countries with medals
@@ -281,7 +288,7 @@ with st.expander('Top 10 countries with medals'):
    sns.catplot(x="index", y="Medal", data=total, height=6, kind="bar")
    plt.xlabel('Countries', fontsize=12 )
    plt.ylabel('Number of Medals', fontsize=12)
-   plt.title('Top 10 countries with medals', fontweight='bold', fontsize=14)
+   plt.title('Top 10 countries by number of medals', fontweight='bold', fontsize=14)
    plt.xticks(rotation = 45)
    st.pyplot(plt.gcf())
 
@@ -331,8 +338,10 @@ with st.expander('Number of Female and Male Athletes over time'):
     plt.legend()
     st.write(ax)
 
+st.text("")
+st.text("")
 
-#**************************Modelling********************************************************************************************************************
+#**************************Modeling********************************************************************************************************************
 
 # removing extra columns
 olympic_df2 = olympic_df.drop(['Name', 'Season','Country'], axis=1)
@@ -347,39 +356,105 @@ def encode_df(dataframe):
 # changing string values to numeric values 
 encode_df(olympic_df2)
 
+st.subheader('Data Modeling')
+st.text("")
 
-with st.expander('Show model'):
 
-    st.subheader('A model to predict medals')
+with st.expander('modeling without KFold'):
 
-    y = olympic_df2.Medal
+        st.subheader('A model to predict medals')
 
-    select_model = st.selectbox('Select model:', ['GaussianNB', 'RandomForestClassifier', 'DecisionTreeClassifier', 'KNeighborsClassifier'])
+        y_1 = olympic_df2.Medal
 
-    model = GaussianNB()
+        select_model_1 = st.selectbox('Select model:', ['GaussianNB', 'RandomForestClassifier', 'DecisionTreeClassifier', 'KNeighborsClassifier'], key="firstselectbox")
 
-    if select_model == 'RandomForestClassifier':
-        model = RandomForestClassifier()
-    elif select_model == 'DecisionTreeClassifier':
-        model = DecisionTreeClassifier()
-    elif select_model == 'KNeighborsClassifier':
-        model = KNeighborsClassifier()
+        model_1 = GaussianNB()
 
-    choices = st.multiselect('Select features', ['Sex','Age','Height', 'Weight', 'Year', 'Sport', 'Event'])
+        if select_model_1 == 'RandomForestClassifier':
+            model_1 = RandomForestClassifier()
+        elif select_model_1 == 'DecisionTreeClassifier':
+            model_1 = DecisionTreeClassifier()
+        elif select_model_1 == 'KNeighborsClassifier':
+            model_1 = KNeighborsClassifier()
 
-    test_size = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1)
+        choices_1 = st.multiselect('Select features', ['Sex','Age','Height', 'Weight', 'Year', 'Sport', 'Event'], key="firstmultiselect")
 
-    if len(choices) > 0 and st.button('RUN MODEL'):
-        with st.spinner('Training...'):
-            x = olympic_df2[choices]
-            x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=2)
+        test_size_1 = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1, key="firstslider")
 
-            x_train = x_train.to_numpy().reshape(-1, len(choices))
-            model.fit(x_train, y_train)
+        if len(choices_1) > 0 and st.button('RUN MODEL', key="firstbutton"):
+            with st.spinner('Training...'):
+                x_1 = olympic_df2[choices_1]
+                x_train, x_test, y_train, y_test = train_test_split(x_1, y_1, test_size=test_size_1, random_state=2)
 
-            x_test = x_test.to_numpy().reshape(-1, len(choices))
-            y_pred = model.predict(x_test)
+                x_train = x_train.to_numpy().reshape(-1, len(choices_1))
+                model_1.fit(x_train, y_train)
 
-            accuracy = accuracy_score(y_test, y_pred)
+                x_test = x_test.to_numpy().reshape(-1, len(choices_1))
+                y_pred = model_1.predict(x_test)
 
-            st.write(f'Accuracy = {accuracy:.2f}')
+                accuracy_1 = accuracy_score(y_test, y_pred)
+
+                st.write(f'Accuracy = {accuracy_1:.5f}')
+
+
+with st.expander('modeling with KFold'):
+
+        st.subheader('A model to predict medals')
+
+        y_2 = olympic_df2.Medal
+
+        select_model_2 = st.selectbox('Select model:', ['GaussianNB', 'RandomForestClassifier', 'DecisionTreeClassifier', 'KNeighborsClassifier'], key="secondselectbox")
+
+        model_2 = GaussianNB()
+
+        if select_model_2 == 'RandomForestClassifier':
+            model_2 = RandomForestClassifier()
+        elif select_model_2 == 'DecisionTreeClassifier':
+            model_2 = DecisionTreeClassifier()
+        elif select_model_2 == 'KNeighborsClassifier':
+            model_2 = KNeighborsClassifier()
+
+        choices_2 = st.multiselect('Select features', ['Sex','Age','Height', 'Weight', 'Year', 'Sport', 'Event'], key="secondmultiselect")
+        x_2 = olympic_df2[choices_2]
+        test_size_2 = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1, key="secondslider")
+
+        if len(choices_2) > 0 and st.button('RUN MODEL', key="secondbutton"):
+            with st.spinner('Training...'):
+                kf_two = KFold(n_splits=5, shuffle=True, random_state=42)
+                accuracies = []
+                i_2 = 0
+                for train_index, test_index in kf_two.split(x_2):
+                    i_2 += 1
+                    model_2 = RandomForestClassifier(random_state=42)
+                    x_train, x_test = x_2.iloc[train_index], x_2.iloc[test_index]
+                    y_train, y_test = y_2.iloc[train_index], y_2.iloc[test_index]
+                    model_2.fit(x_train, y_train)
+                    y_pred = model_2.predict(x_test)
+                    accuracy_2 = accuracy_score(y_pred, y_test)
+                    accuracies.append(accuracy_2)
+                    st.write(i_2, ') accuracy = ', accuracy_2)
+
+                st.write(f'Mean accuracy: {np.array(accuracies).mean():.5f}')
+          
+
+#**************************Conclusion********************************************************************************************************************
+st.text("")
+st.text("")
+
+# adding conclusion
+st.subheader('Conclusion')
+st.text("")
+st.write("After using differenent classification models with and without KFold, it is concluded that the \"GaussionNB\" and \"KNeighborsClassifier\" have the highest accuracy score in comparison with \"RandomForestClassifier\" and \"DecisionTreeClassifier\". accuracy scores for the different models are listed below:")
+
+col_30, col_31 = st.columns(2)
+with col_30:
+    st.markdown('**GaussionNB: 0.84**')
+with col_31:
+    st.markdown('**RandomForestClassifier: 0.83**')
+
+
+col_32, col_33 = st.columns(2)
+with col_32:
+    st.markdown('**DecisionTreeClassifier: 0.75**')
+with col_33:
+    st.markdown('**KNeighborsClassifier: 0.84**')
