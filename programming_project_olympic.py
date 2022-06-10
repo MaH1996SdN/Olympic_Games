@@ -10,6 +10,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
 
 
 # creating the olympics dataframe 
@@ -329,3 +330,56 @@ with st.expander('Number of Female and Male Athletes over time'):
     plt.xticks(rotation = 45)
     plt.legend()
     st.write(ax)
+
+
+#**************************Modelling********************************************************************************************************************
+
+# removing extra columns
+olympic_df2 = olympic_df.drop(['Name', 'Season','Country'], axis=1)
+
+# defining function for changing string values to numeric values for better modelling
+def encode_df(dataframe):
+    le = LabelEncoder()
+    for column in dataframe.columns:
+        dataframe[column] = le.fit_transform(dataframe[column])
+    return dataframe
+
+# changing string values to numeric values 
+encode_df(olympic_df2)
+
+
+with st.expander('Show model'):
+
+    st.subheader('A model to predict medals')
+
+    y = olympic_df2.Medal
+
+    select_model = st.selectbox('Select model:', ['GaussianNB', 'RandomForestClassifier', 'DecisionTreeClassifier', 'KNeighborsClassifier'])
+
+    model = GaussianNB()
+
+    if select_model == 'RandomForestClassifier':
+        model = RandomForestClassifier()
+    elif select_model == 'DecisionTreeClassifier':
+        model = DecisionTreeClassifier()
+    elif select_model == 'KNeighborsClassifier':
+        model = KNeighborsClassifier()
+
+    choices = st.multiselect('Select features', ['Sex','Age','Height', 'Weight', 'Year', 'Sport', 'Event'])
+
+    test_size = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1)
+
+    if len(choices) > 0 and st.button('RUN MODEL'):
+        with st.spinner('Training...'):
+            x = olympic_df2[choices]
+            x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=2)
+
+            x_train = x_train.to_numpy().reshape(-1, len(choices))
+            model.fit(x_train, y_train)
+
+            x_test = x_test.to_numpy().reshape(-1, len(choices))
+            y_pred = model.predict(x_test)
+
+            accuracy = accuracy_score(y_test, y_pred)
+
+            st.write(f'Accuracy = {accuracy:.2f}')
