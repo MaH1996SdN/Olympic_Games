@@ -1,5 +1,4 @@
 # importing libraries
-from ctypes.wintypes import SIZE
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,7 +26,7 @@ regions_df = pd.read_csv('https://raw.githubusercontent.com/MaH1996SdN/programmi
 # adding some explanation about the data
 st.header('120 years of Olympic history')
 st.write('basic bio data on athletes and medal results from Athens 1896 to Rio 2016')
-st.write('This is a historical dataset on the modern Olympic Games, including all the Games from Athens 1896 to Rio 2016. The Winter and Summer Games were held in the same year up until 1992. After that, they staggered them such that Winter Games occur on a four year cycle starting with 1994, then Summer in 1996, then Winter in 1998, and so on')
+st.write('This is a historical dataset on the modern Olympic Games, including all the Games from Athens 1896 to Rio 2016. The Winter and Summer Games were held in the same year up until 1992. After that, they staggered them such that Winter Games occur on a four year cycle starting with 1994, then Summer in 1996, then Winter in 1998, and so on.')
 
 st.text("")
 st.text("")
@@ -38,11 +37,12 @@ st.image(image)
 st.text("")
 st.text("")
 
-# adding a checkbox for displayin raw data
+
 show_raw_data = st.checkbox('Show raw data')
 if show_raw_data:
     st.subheader('Raw data')
     st.write(olympic_df)
+
 
 
 #********************************ORGANAZING AND CLEANING DATA************************************************************************************************************
@@ -225,9 +225,14 @@ with st.expander('Exploration on women in Olympics'):
         st.dataframe(femaleGoldMedalists.Country.value_counts().rename(index='').tail(5))
         st.text("")
 
+# Describe
+with st.expander('Describing dataframe'):
+    st.dataframe(olympic_df.describe())
+
 # Correlation
 with st.expander('Correlation between features'):
     st.dataframe(olympic_df.corr())
+
 
 # distrubution
 with st.expander('Distrubutions'):
@@ -362,7 +367,7 @@ st.text("")
 
 with st.expander('modeling without KFold'):
 
-        st.subheader('A model to predict medals')
+        st.subheader('Predict medals')
 
         y_1 = olympic_df2.Medal
 
@@ -377,19 +382,17 @@ with st.expander('modeling without KFold'):
         elif select_model_1 == 'KNeighborsClassifier':
             model_1 = KNeighborsClassifier()
 
-        choices_1 = st.multiselect('Select features', ['Sex','Age','Height', 'Weight', 'Year', 'Sport', 'Event'], key="firstmultiselect")
+        
 
         test_size_1 = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1, key="firstslider")
 
-        if len(choices_1) > 0 and st.button('RUN MODEL', key="firstbutton"):
+        if st.button('RUN MODEL', key="firstbutton"):
             with st.spinner('Training...'):
-                x_1 = olympic_df2[choices_1]
-                x_train, x_test, y_train, y_test = train_test_split(x_1, y_1, test_size=test_size_1, random_state=2)
+                x_1 = olympic_df2.drop(['Medal'], axis=1)
+                x_train, x_test, y_train, y_test = train_test_split(x_1, y_1, test_size=test_size_1, random_state=42)
 
-                x_train = x_train.to_numpy().reshape(-1, len(choices_1))
                 model_1.fit(x_train, y_train)
 
-                x_test = x_test.to_numpy().reshape(-1, len(choices_1))
                 y_pred = model_1.predict(x_test)
 
                 accuracy_1 = accuracy_score(y_test, y_pred)
@@ -399,7 +402,7 @@ with st.expander('modeling without KFold'):
 
 with st.expander('modeling with KFold'):
 
-        st.subheader('A model to predict medals')
+        st.subheader('Predict medals')
 
         y_2 = olympic_df2.Medal
 
@@ -414,11 +417,11 @@ with st.expander('modeling with KFold'):
         elif select_model_2 == 'KNeighborsClassifier':
             model_2 = KNeighborsClassifier()
 
-        choices_2 = st.multiselect('Select features', ['Sex','Age','Height', 'Weight', 'Year', 'Sport', 'Event'], key="secondmultiselect")
-        x_2 = olympic_df2[choices_2]
+        
+        x_2 = olympic_df2.drop(['Medal'], axis=1)
         test_size_2 = st.slider('Test size: ', min_value=0.1, max_value=0.9, step =0.1, key="secondslider")
 
-        if len(choices_2) > 0 and st.button('RUN MODEL', key="secondbutton"):
+        if st.button('RUN MODEL', key="secondbutton"):
             with st.spinner('Training...'):
                 kf_two = KFold(n_splits=5, shuffle=True, random_state=42)
                 accuracies = []
